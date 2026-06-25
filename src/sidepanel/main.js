@@ -1,5 +1,13 @@
+import { marked } from 'marked';
 import { getSettings } from '../lib/storage.js';
 import { summarize } from '../lib/llm/index.js';
+
+marked.setOptions({ breaks: true, gfm: true });
+marked.use({
+  renderer: {
+    html() { return ''; },
+  },
+});
 
 const els = {
   analyzeCurrent: document.getElementById('analyze-current'),
@@ -68,45 +76,88 @@ function showResult(title, parsed) {
   }
 
   if (parsed.summary) {
-    const sec = document.createElement('section');
-    sec.className = 'result-section';
-    const label = document.createElement('p');
-    label.className = 'section-label';
-    label.textContent = '主旨';
-    const body = document.createElement('p');
-    body.className = 'summary-text';
-    body.textContent = parsed.summary;
-    sec.append(label, body);
-    els.result.appendChild(sec);
+    els.result.appendChild(buildMarkdownSection('主旨', parsed.summary, 'summary-md'));
   }
 
   if (parsed.mindmap) {
-    const sec = document.createElement('section');
-    sec.className = 'result-section';
-    const label = document.createElement('p');
-    label.className = 'section-label';
-    label.textContent = '思维导图（原始 Markdown）';
-    const pre = document.createElement('pre');
-    pre.className = 'raw-block';
-    pre.textContent = parsed.mindmap;
-    sec.append(label, pre);
-    els.result.appendChild(sec);
+    els.result.appendChild(buildMarkdownSection('思维导图', parsed.mindmap, 'mindmap-md'));
   }
 
   if (parsed.vocab?.length) {
-    const sec = document.createElement('section');
-    sec.className = 'result-section';
-    const label = document.createElement('p');
-    label.className = 'section-label';
-    label.textContent = `重点词汇（JSON，${parsed.vocab.length} 条）`;
-    const pre = document.createElement('pre');
-    pre.className = 'raw-block';
-    pre.textContent = JSON.stringify(parsed.vocab, null, 2);
-    sec.append(label, pre);
-    els.result.appendChild(sec);
+    els.result.appendChild(buildVocabSection(parsed.vocab));
   }
 
   els.result.classList.remove('hidden');
+}
+
+function buildMarkdownSection(labelText, markdown, bodyClass) {
+  const sec = document.createElement('section');
+  sec.className = 'result-section';
+  const label = document.createElement('p');
+  label.className = 'section-label';
+  label.textContent = labelText;
+  const body = document.createElement('div');
+  body.className = `markdown-body ${bodyClass}`;
+  body.innerHTML = marked.parse(markdown);
+  sec.append(label, body);
+  return sec;
+}
+
+function buildVocabSection(vocab) {
+  const sec = document.createElement('section');
+  sec.className = 'result-section';
+  const label = document.createElement('p');
+  label.className = 'section-label';
+  label.textContent = `重点词汇 · ${vocab.length} 条`;
+  const list = document.createElement('div');
+  list.className = 'vocab-list';
+  for (const item of vocab) {
+    list.appendChild(buildVocabCard(item));
+  }
+  sec.append(label, list);
+  return sec;
+}
+
+function buildVocabCard(item) {
+  const card = document.createElement('article');
+  card.className = 'vocab-card';
+
+  const head = document.createElement('div');
+  head.className = 'vocab-head';
+  const word = document.createElement('span');
+  word.className = 'vocab-word';
+  word.textContent = item.word || '';
+  head.appendChild(word);
+  if (item.pos) {
+    const pos = document.createElement('span');
+    pos.className = 'vocab-pos';
+    pos.textContent = item.pos;
+    head.appendChild(pos);
+  }
+  card.appendChild(head);
+
+  if (item.meaning) {
+    const meaning = document.createElement('p');
+    meaning.className = 'vocab-meaning';
+    meaning.textContent = item.meaning;
+    card.appendChild(meaning);
+  }
+
+  if (item.example) {
+    const ex = document.createElement('p');
+    ex.className = 'vocab-example';
+    ex.textContent = item.example;
+    card.appendChild(ex);
+  }
+
+  if (item.exampleZh) {
+    const exZh = document.createElement('p');
+    exZh.className = 'vocab-example-zh';
+    exZh.textContent = item.exampleZh;
+    card.appendChild(exZh);
+  }
+
+  return card;
 }
 
 function showError(err) {

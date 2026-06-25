@@ -10,6 +10,9 @@ export default defineConfig({
       ],
     }),
   ],
+  optimizeDeps: {
+    include: ['marked'],
+  },
   build: {
     outDir: 'dist',
     emptyOutDir: true,
