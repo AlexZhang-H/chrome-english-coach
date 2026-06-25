@@ -1,0 +1,18 @@
+{
+  "name": "ai-english-coach",
+  "version": "0.1.0",
+  "description": "AI English Coach — Chrome extension that helps software engineers improve technical English reading through AI-powered analysis.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite build --watch --mode development",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "vite": "^5.4.10",
+    "vite-plugin-static-copy": "^2.1.0"
+  },
+  "dependencies": {
+    "marked": "^14.1.3"
+  }
+}

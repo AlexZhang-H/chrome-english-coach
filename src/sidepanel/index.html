@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI English Coach</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="topbar">
+        <div class="brand">
+          <span class="logo-dot"></span>
+          <h1>AI English Coach</h1>
+        </div>
+        <button id="open-options" class="ghost-btn" title="设置">⚙</button>
+      </header>
+
+      <section class="hero">
+        <p class="hero-title">教你像母语者一样读懂技术博客</p>
+        <p class="hero-sub">输入文章 URL，或在网页中划词右键发送。</p>
+      </section>
+
+      <section class="action-card">
+        <button id="analyze-current" class="primary-btn">分析当前页</button>
+        <div class="divider"><span>或</span></div>
+        <input id="url-input" type="url" placeholder="https://techcrunch.com/..." />
+        <button id="analyze-url" class="secondary-btn">分析这个 URL</button>
+      </section>
+
+      <section id="status" class="status-card hidden"></section>
+
+      <section id="result" class="result-card hidden">
+        <p class="placeholder">分析结果将显示在这里。</p>
+      </section>
+    </main>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

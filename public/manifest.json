@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "AI English Coach",
+  "version": "0.1.0",
+  "description": "AI-powered English reading coach for software engineers — analyze tech blogs, learn idiomatic phrases, export bilingual PDFs.",
+  "permissions": [
+    "sidePanel",
+    "contextMenus",
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>",
+    "https://api.openai.com/*",
+    "https://api.anthropic.com/*"
+  ],
+  "background": {
+    "service_worker": "service-worker.js",
+    "type": "module"
+  },
+  "side_panel": {
+    "default_path": "src/sidepanel/index.html"
+  },
+  "action": {
+    "default_title": "Open AI English Coach"
+  },
+  "options_ui": {
+    "page": "src/options/index.html",
+    "open_in_tab": true
+  }
+}
