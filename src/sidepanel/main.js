@@ -11,8 +11,6 @@ marked.use({
 
 const els = {
   analyzeCurrent: document.getElementById('analyze-current'),
-  analyzeUrl: document.getElementById('analyze-url'),
-  urlInput: document.getElementById('url-input'),
   openOptions: document.getElementById('open-options'),
   status: document.getElementById('status'),
   result: document.getElementById('result'),
@@ -250,15 +248,6 @@ els.openOptions.addEventListener('click', () => {
 });
 
 els.analyzeCurrent.addEventListener('click', runAnalyzeCurrent);
-
-els.analyzeUrl.disabled = true;
-els.urlInput.disabled = true;
-els.urlInput.placeholder = 'M3 将支持，敬请期待';
-els.analyzeUrl.title = '该功能将在 M3 上线';
-
-els.analyzeUrl.addEventListener('click', () => {
-  showStatus('「分析 URL」功能将在 M3 上线，当前请使用「分析当前页」', 'info');
-});
 
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg?.type === 'ANALYZE_SELECTION') {

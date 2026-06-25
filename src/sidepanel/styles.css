@@ -151,20 +151,6 @@ input:disabled {
 }
 .secondary-btn:disabled:hover { border-color: var(--border); color: var(--text); }
 
-.divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 11px;
-  color: var(--text-muted);
-}
-.divider::before, .divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-
 input[type='url'], input[type='password'], input[type='text'], select {
   width: 100%;
   padding: 9px 12px;
