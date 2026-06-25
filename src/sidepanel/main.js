@@ -23,6 +23,13 @@ const ERROR_MESSAGES = {
   EMPTY_PAGE: '未能从当前页提取到正文，请换一个页面',
 };
 
+const PARSE_ERROR_HINTS = {
+  NO_DELIMITERS: 'AI 未按分段格式返回，已把整段当主旨显示',
+  VOCAB_NOT_ARRAY: '词汇 JSON 不是数组，已忽略',
+  VOCAB_INVALID_JSON: '词汇 JSON 解析失败，已忽略',
+  EMPTY: 'AI 返回为空',
+};
+
 async function applyTheme() {
   const { theme } = await getSettings();
   const resolved =
@@ -51,7 +58,7 @@ function hideResult() {
   els.result.innerHTML = '';
 }
 
-function showResult(title, body) {
+function showResult(title, parsed) {
   els.result.innerHTML = '';
   if (title) {
     const h = document.createElement('p');
@@ -59,10 +66,46 @@ function showResult(title, body) {
     h.textContent = title;
     els.result.appendChild(h);
   }
-  const p = document.createElement('p');
-  p.className = 'summary-text';
-  p.textContent = body;
-  els.result.appendChild(p);
+
+  if (parsed.summary) {
+    const sec = document.createElement('section');
+    sec.className = 'result-section';
+    const label = document.createElement('p');
+    label.className = 'section-label';
+    label.textContent = '主旨';
+    const body = document.createElement('p');
+    body.className = 'summary-text';
+    body.textContent = parsed.summary;
+    sec.append(label, body);
+    els.result.appendChild(sec);
+  }
+
+  if (parsed.mindmap) {
+    const sec = document.createElement('section');
+    sec.className = 'result-section';
+    const label = document.createElement('p');
+    label.className = 'section-label';
+    label.textContent = '思维导图（原始 Markdown）';
+    const pre = document.createElement('pre');
+    pre.className = 'raw-block';
+    pre.textContent = parsed.mindmap;
+    sec.append(label, pre);
+    els.result.appendChild(sec);
+  }
+
+  if (parsed.vocab?.length) {
+    const sec = document.createElement('section');
+    sec.className = 'result-section';
+    const label = document.createElement('p');
+    label.className = 'section-label';
+    label.textContent = `重点词汇（JSON，${parsed.vocab.length} 条）`;
+    const pre = document.createElement('pre');
+    pre.className = 'raw-block';
+    pre.textContent = JSON.stringify(parsed.vocab, null, 2);
+    sec.append(label, pre);
+    els.result.appendChild(sec);
+  }
+
   els.result.classList.remove('hidden');
 }
 
@@ -137,9 +180,13 @@ async function runAnalyzeCurrent() {
   try {
     const settings = await getSettings();
     const { title, text } = await extractCurrentTabContent();
-    const summary = await summarize({ title, text, settings });
-    clearStatus();
-    showResult(title || '文章主旨', summary);
+    const parsed = await summarize({ title, text, settings });
+    showResult(title || '文章分析', parsed);
+    if (parsed.parseError && PARSE_ERROR_HINTS[parsed.parseError]) {
+      showStatus(PARSE_ERROR_HINTS[parsed.parseError], 'info');
+    } else {
+      clearStatus();
+    }
   } catch (err) {
     showError(err);
   } finally {

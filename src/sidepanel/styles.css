@@ -226,4 +226,35 @@ input:focus, select:focus {
   line-height: 1.7;
 }
 
+.result-section {
+  margin-top: 16px;
+}
+.result-section:first-of-type {
+  margin-top: 0;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+  margin: 0 0 6px 0;
+}
+
+.raw-block {
+  margin: 0;
+  padding: 10px 12px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 360px;
+  overflow: auto;
+}
+
 .hidden { display: none; }
